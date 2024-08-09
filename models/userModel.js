@@ -60,23 +60,22 @@ UserModel.prototype.cleanUpLogin = function () {
     }
 }
 
-UserModel.prototype.validateLogin = async function (callback) {
-    this.cleanUpLogin()
-    const userFound = await userCollection.findOne({ username: this.user.username, password: this.user.password })
-
-    if (!userFound) {
-        this.errors.push(`Invalid Details`)
-        callback()
-    } else {
-        this.user = userFound
-        callback()
-
-    }
+UserModel.prototype.validateLogin = function () {
+    return new Promise(async (resolve, reject) => {
+        this.cleanUpLogin()
+        const userFound = await userCollection.findOne({ username: this.user.username, password: this.user.password })
+        if (!userFound) {
+            this.errors.push(`Invalid Details`)
+            reject(this.errors)
+        } else {
+            this.user = userFound
+            resolve(userFound)
+        }
+    })
 }
 
-UserModel.prototype.findUser = async function (callback) {
-    this.validateLogin(callback)
-
+UserModel.prototype.findUser = function () {
+    return this.validateLogin()
 }
 
 

@@ -16,13 +16,10 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
     const user = new UserModel(req.body)
-    user.findUser(() => {
-        if (user.errors.length) {
-            res.status(400).send(user.errors)
-        } else {
-            res.status(200).send(user.user)
-        }
+    user.findUser().then((response) => {
+        res.status(200).send(response)
+    }).catch((err) => {
+        res.status(400).send(err)
     })
-
 
 }
