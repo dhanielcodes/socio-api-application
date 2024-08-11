@@ -1,25 +1,37 @@
-const UserModel = require("../models/userModel")
+const UserModel = require("../models/userModel");
 
 exports.home = (req, res) => {
-    res.render('home-guest')
-}
+  res.render("home-guest");
+};
+
+exports.profile = (req, res) => {
+  res.send("Profile Page");
+};
 
 exports.register = (req, res) => {
-    const user = new UserModel(req.body)
-    user.storeUser()
-    if (user.errors.length) {
-        res.status(400).send(user.errors)
-    } else {
-        res.status(200).send(user.user)
-    }
-}
-
-exports.login = (req, res) => {
-    const user = new UserModel(req.body)
-    user.findUser().then((response) => {
-        res.status(200).send(response)
-    }).catch((err) => {
-        res.status(400).send(err)
+  const user = new UserModel(req.body);
+  user
+    .storeUser()
+    .then((response) => {
+      console.log(response);
+      res.status(200).send(response);
     })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+};
 
-}
+exports.login = async (req, res, next) => {
+  const user = new UserModel(req.body);
+  await user
+    .findUser()
+    .then((response) => {
+      console.log(response);
+      res.status(200).send(response);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+};

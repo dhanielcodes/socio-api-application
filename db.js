@@ -8,5 +8,6 @@ const connectDb = async () => {
     module.exports = db.db()
     const app = require('./app')
     app.listen(PORT)
+    console.log('Listen on http://localhost:'+PORT)
 }
 connectDb()
