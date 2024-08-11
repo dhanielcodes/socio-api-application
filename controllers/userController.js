@@ -1,11 +1,11 @@
 const UserModel = require("../models/userModel");
 
 exports.home = (req, res) => {
-  res.render("home-guest");
-};
-
-exports.profile = (req, res) => {
-  res.send("Profile Page");
+  if (req.session.user) {
+    res.render("home-dashboard", { username: req.session.user.username });
+  } else {
+    res.render("home-guest");
+  }
 };
 
 exports.register = (req, res) => {
@@ -28,10 +28,20 @@ exports.login = async (req, res, next) => {
     .findUser()
     .then((response) => {
       console.log(response);
-      res.status(200).send(response);
+      req.session.user = user.user;
+      // res.status(200).send(response);
+      req.session.save(() => {
+        res.redirect("/");
+      });
     })
     .catch((err) => {
       console.log(err);
       res.status(400).send(err);
     });
+};
+
+exports.logout = async (req, res) => {
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
 };
